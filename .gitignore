@@ -158,7 +158,9 @@ rsconnect/
 # *.DS_Store
 
 /wandb/
-/data/
+/data/**
+!/data/**/
+!/data/**/.gitkeep
 results/*
 !results/.gitkeep
 .env

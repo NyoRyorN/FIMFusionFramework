@@ -80,12 +80,11 @@ TNSRE2026FIMFusion/
 │   ├── complement_ablation/         # 欠損動作の補完手法 ablation の設定
 │   ├── fusion_strategy_ablations/   # 単一動作・fusion 戦略の設定
 │   └── model_ablation/              # モデル ablation の設定 (モジュール構成違い＋ベースライン、モデル以外の条件は共通)
-├── data/                            # 入力データと前処理後データ
+├── data/                            # 入力データと前処理後データ（gitignore 対象。構成は .gitkeep で維持）
 │   ├── OriginalData/                # 元データ
-│   ├── ComplementedData/            # 時間補完後データ
-│   ├── FilteredData/                # フィルタ・特徴量計算後データ
-│   ├── ConciseData/                 # 簡略関節セットのデータ
-│   └── Info/                        # データリストなどのメタ情報
+│   │   └── Unused/                  # 骨格品質不良などの理由で除外した生データ
+│   ├── ConciseData/                 # 簡略関節セットのデータ（make_concise_data.py が出力）
+│   └── Distributions/               # 動作欠損分布 CSV（make_concise_data.py が出力）
 ├── docs/                            # 実験ごとの詳細 README
 ├── experiments/                     # 実験エントリーポイント（exam_each_seed.py, exam_fusion.py）
 ├── reports/                         # 結果集計・可視化スクリプト

@@ -83,12 +83,11 @@ TNSRE2026FIMFusion/
 │   ├── complement_ablation/         # Missing-action complementation ablation configs
 │   ├── fusion_strategy_ablations/   # Single-action and fusion strategy configs
 │   └── model_ablation/              # Model ablation configs (module variants + baselines, shared non-model conditions)
-├── data/                            # Input and processed data
+├── data/                            # Input and processed data (gitignored; structure kept via .gitkeep)
 │   ├── OriginalData/                # Raw data
-│   ├── ComplementedData/            # Time-complemented data
-│   ├── FilteredData/                # Filtered and feature-computed data
-│   ├── ConciseData/                 # Reduced-joint data
-│   └── Info/                        # Metadata such as data lists
+│   │   └── Unused/                  # Raw sessions excluded for skeleton-quality reasons
+│   ├── ConciseData/                 # Reduced-joint data (written by make_concise_data.py)
+│   └── Distributions/               # Missing-motion distribution CSVs (written by make_concise_data.py)
 ├── docs/                            # Detailed experiment READMEs
 ├── experiments/                     # Experiment entrypoints (exam_each_seed.py, exam_fusion.py)
 ├── reports/                         # Result aggregation and visualization scripts
