@@ -1,0 +1,35 @@
+LateFusion(
+  (fusion): AdaptiveAvgPool1d(output_size=1)
+  (model_list): ModuleList(
+    (0-9): 10 x ConvTran(
+      (embed): Sequential(
+        (0): Conv2d(1, 64, kernel_size=(8, 1), stride=(1, 1), padding=same)
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): GELU(approximate='none')
+        (3): Conv2d(64, 16, kernel_size=(1, 153), stride=(1, 1))
+        (4): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): GELU(approximate='none')
+      )
+      (position_encoding): TAPE(
+        (dropout): Dropout(p=0.01, inplace=False)
+      )
+      (attention): AttentionRelScl(
+        (key): Linear(in_features=16, out_features=16, bias=False)
+        (value): Linear(in_features=16, out_features=16, bias=False)
+        (query): Linear(in_features=16, out_features=16, bias=False)
+        (dropout): Dropout(p=0.01, inplace=False)
+        (to_out): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+      )
+      (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+      (feed_forward): Sequential(
+        (0): Linear(in_features=16, out_features=256, bias=True)
+        (1): ReLU()
+        (2): Dropout(p=0.01, inplace=False)
+        (3): Linear(in_features=256, out_features=16, bias=True)
+        (4): Dropout(p=0.01, inplace=False)
+      )
+      (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+      (fc): Linear(in_features=16, out_features=2, bias=True)
+    )
+  )
+)

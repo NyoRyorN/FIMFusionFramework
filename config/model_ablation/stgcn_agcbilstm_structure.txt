@@ -1,0 +1,143 @@
+LateFusion(
+  (fusion): AdaptiveAvgPool1d(output_size=1)
+  (model_list): ModuleList(
+    (0-9): 10 x STGCLSATT(
+      (st_gcn): ST_GCN_Part(
+        (data_bn): BatchNorm1d(153, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (st_gcn_networks): ModuleList(
+          (0): STGCN_Block(
+            (gcn): SpatialGraphicalConv(
+              (conv): Conv2d(9, 96, kernel_size=(1, 1), stride=(1, 1))
+            )
+            (tcn): Sequential(
+              (0): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (1): ReLU(inplace=True)
+              (2): Conv2d(32, 32, kernel_size=(9, 1), stride=(1, 1), padding=(4, 0))
+              (3): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (4): Dropout(p=0.5, inplace=True)
+            )
+            (relu): ReLU(inplace=True)
+          )
+          (1-2): 2 x STGCN_Block(
+            (gcn): SpatialGraphicalConv(
+              (conv): Conv2d(32, 96, kernel_size=(1, 1), stride=(1, 1))
+            )
+            (tcn): Sequential(
+              (0): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (1): ReLU(inplace=True)
+              (2): Conv2d(32, 32, kernel_size=(9, 1), stride=(1, 1), padding=(4, 0))
+              (3): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (4): Dropout(p=0.5, inplace=True)
+            )
+            (relu): ReLU(inplace=True)
+          )
+          (3): STGCN_Block(
+            (gcn): SpatialGraphicalConv(
+              (conv): Conv2d(32, 192, kernel_size=(1, 1), stride=(1, 1))
+            )
+            (tcn): Sequential(
+              (0): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (1): ReLU(inplace=True)
+              (2): Conv2d(64, 64, kernel_size=(9, 1), stride=(2, 1), padding=(4, 0))
+              (3): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (4): Dropout(p=0.5, inplace=True)
+            )
+            (residual): Sequential(
+              (0): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+            (relu): ReLU(inplace=True)
+          )
+          (4): STGCN_Block(
+            (gcn): SpatialGraphicalConv(
+              (conv): Conv2d(64, 192, kernel_size=(1, 1), stride=(1, 1))
+            )
+            (tcn): Sequential(
+              (0): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (1): ReLU(inplace=True)
+              (2): Conv2d(64, 64, kernel_size=(9, 1), stride=(1, 1), padding=(4, 0))
+              (3): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (4): Dropout(p=0.5, inplace=True)
+            )
+            (relu): ReLU(inplace=True)
+          )
+        )
+        (edge_importance): ParameterList(
+            (0): Parameter containing: [torch.float32 of size 3x17x17]
+            (1): Parameter containing: [torch.float32 of size 3x17x17]
+            (2): Parameter containing: [torch.float32 of size 3x17x17]
+            (3): Parameter containing: [torch.float32 of size 3x17x17]
+            (4): Parameter containing: [torch.float32 of size 3x17x17]
+        )
+      )
+      (agc_lstm): AGCLSTM(
+        (tap): AvgPool2d(kernel_size=(9, 1), stride=(2, 1), padding=(4, 0))
+        (f_cell): AGCLSTMCell(
+          (gcn_xi): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_xf): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_xo): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_xu): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_hi): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_hf): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_ho): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_hu): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (attn): SpatialAttention(
+            (Wq): Linear(in_features=64, out_features=64, bias=False)
+            (Wq_post): Linear(in_features=64, out_features=64, bias=True)
+            (Wh): Linear(in_features=64, out_features=64, bias=True)
+            (Us): Linear(in_features=64, out_features=1, bias=True)
+          )
+        )
+        (b_cell): AGCLSTMCell(
+          (gcn_xi): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_xf): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_xo): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_xu): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_hi): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_hf): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_ho): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (gcn_hu): GraphConv(
+            (W): Linear(in_features=64, out_features=192, bias=True)
+          )
+          (attn): SpatialAttention(
+            (Wq): Linear(in_features=64, out_features=64, bias=False)
+            (Wq_post): Linear(in_features=64, out_features=64, bias=True)
+            (Wh): Linear(in_features=64, out_features=64, bias=True)
+            (Us): Linear(in_features=64, out_features=1, bias=True)
+          )
+        )
+      )
+      (fc): Linear(in_features=128, out_features=2, bias=True)
+    )
+  )
+)

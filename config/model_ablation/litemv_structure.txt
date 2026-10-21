@@ -1,0 +1,40 @@
+LateFusion(
+  (fusion): AdaptiveAvgPool1d(output_size=1)
+  (model_list): ModuleList(
+    (0-9): 10 x LITEMV(
+      (inception_convs): ModuleList(
+        (0): SeparableConv1d(
+          (depthwise): Conv1d(153, 153, kernel_size=(40,), stride=(1,), padding=same, groups=153, bias=False)
+          (pointwise): Conv1d(153, 32, kernel_size=(1,), stride=(1,), bias=False)
+        )
+        (1): SeparableConv1d(
+          (depthwise): Conv1d(153, 153, kernel_size=(20,), stride=(1,), padding=same, groups=153, bias=False)
+          (pointwise): Conv1d(153, 32, kernel_size=(1,), stride=(1,), bias=False)
+        )
+        (2): SeparableConv1d(
+          (depthwise): Conv1d(153, 153, kernel_size=(10,), stride=(1,), padding=same, groups=153, bias=False)
+          (pointwise): Conv1d(153, 32, kernel_size=(1,), stride=(1,), bias=False)
+        )
+      )
+      (hybrid): HybridLayer()
+      (inception_bn): BatchNorm1d(2697, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+      (fcn1): Sequential(
+        (0): SeparableConv1d(
+          (depthwise): Conv1d(2697, 2697, kernel_size=(20,), stride=(1,), padding=same, dilation=(2,), groups=2697, bias=False)
+          (pointwise): Conv1d(2697, 32, kernel_size=(1,), stride=(1,), bias=False)
+        )
+        (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (fcn2): Sequential(
+        (0): SeparableConv1d(
+          (depthwise): Conv1d(32, 32, kernel_size=(10,), stride=(1,), padding=same, dilation=(4,), groups=32, bias=False)
+          (pointwise): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+        )
+        (1): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (fc): Linear(in_features=32, out_features=2, bias=True)
+    )
+  )
+)

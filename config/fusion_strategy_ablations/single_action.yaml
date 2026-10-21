@@ -1,0 +1,79 @@
+wandb:
+  use_wandb : false # Use Weights & Biases for experiment tracking: true/false
+  entity: "" # wandb entity name / team name
+
+model:
+  name: STGCN # Model architecture selection
+  cam_type: none # CAM type: none, gradcam
+  st-gcn:
+    graph:
+      strategy  : spatial # Graph connection strategy: "spatial", "distance", "uniform"
+      hop_size  : 1 # Graph hop distance: typically 1-3, controls neighborhood size
+      dilation  : 1 # Graph dilation factor: 1 (no dilation), 2-4 (sparse connections)
+      norm_mode : DA # Graph normalization mode: "DAD" (symmetric), "AD/DA" (asymmetric)
+    dropout: 0.5 # Dropout probability: 0.0-0.8, typically 0.1-0.5
+    t_kernel_size: 9 # Temporal kernel size: odd numbers 3-15, affects temporal receptive field
+    edge_importance_weighting: true # Learn edge importance: true/false
+    output_channel_list: [32,32,32,64,64,128,128] # Channel progression per layer
+
+  rnn:
+    bidirectional : true  # bidirectional LSTM: true/false. true = BiLSTM, false = LSTM
+    num_layers    : 1 # Number of LSTM layers: typically 1-3
+  # temp_transformer:
+  #   t_nhead: 4 # Number of attention heads in temporal transformer: 2, 4, 8
+  #   dim_feedforward: 128 # Feedforward network dimension in transformer: typically 128-1024
+  #   num_layers: 1 # Number of transformer layers: typically 1-4
+  agc-lstm:
+    bidirectional : true # Bidirectional AGC-LSTM: true/false
+    double_channel:
+      use: true # Double channel size in AGC-LSTM from last ST-GCN: true/false
+      mode: tap # Mode for doubling channels: tap(use Temporal Average Pooling), conv (use 9x1 Conv and stride-2 Conv)
+    loss:
+      lambda: 0.01 # Temporal consistency loss weight: 0.001-0.1
+      beta: 0.001 # Spatial sparsity loss weight: 0.0001-0.01
+      gamma: 1 # Attention regularization weight: 0.01-1.0
+  attention:
+    mode          : "ST-sequential" # Attention mechanism type
+    # Options: "ST-sequential", "ST-joint" (old: "spatial", "temporal", "ST-parallel", "ST-self-attention")
+
+attributes          : [p, v, a] # [p] or [p, v] or [p, v, a]
+fim_item_indices    : [8,9,10,11,12] # [8,9,10,11,12]
+action_task_indices : [0,1,2,3,4,5,6,7,8,9] # [0,1,2,3,4,5,6,7,8,9]
+data_list_path      : "" # Path to data list CSV file: e.g., "data/DataLists/AllExists_01020304050607080910.csv"
+seeds               : [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+classes             : [6,7] # [1,2,3,4,5,6,7]
+device              : cuda:1
+seed_fix_mode       : change # split or model or change(change is change both)
+output_weights      : true # true: output weights, false: not output weights
+
+preprocess:
+  use_data_transform  : false
+  norm_centering_mode : First # None, Each, First
+  norm_center_point   : SpineMid
+  use_moving_frame    : true
+  frame_length        : 150
+  is_fill_short       : true
+  is_fill_actionless  : false
+
+trainings:
+  epoch         : 100
+  optimizer     : Adam
+  lr            : 0.01
+  momentum      : 0.9
+  weight_decay  : 0.0001
+  scheduler     : OneCycleLR
+  one_cycle_lr:
+    # max_lr: lr maximum value set
+    pct_start: 0.3
+  reduce_lr_on_plateau:
+    factor: 0.5
+    mode: min
+    patience: 10
+    verbose: true
+  multi_step_lr:
+    gamma: 0.5
+    milestones: [50, 100]
+  batch_size                  : 32
+  is_weighted_random_sampler  : true
+  is_drop_last                : true # Drop last incomplete batch: true/false
+  delete_model_after_training : false # Delete model weights after training: true/false

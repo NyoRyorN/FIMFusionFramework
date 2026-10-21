@@ -1,0 +1,63 @@
+wandb:
+  use_wandb : false # Use Weights & Biases for experiment tracking: true/false
+  entity: "" # wandb entity name / team name
+
+model:
+  name: LITEMV # DeepRehabPile baseline: LITE MultiVariate (Ismail-Fawaz et al., arXiv:2409.02869)
+  cam_type: none # GradCAM is not supported for baseline models (requires st_gcn layers)
+  litemv:
+    n_filters   : 32 # Filters per inception/FCN convolution (DeepRehabPile default)
+    kernel_size : 40 # Head kernel size of the inception module (DeepRehabPile default)
+    n_joints    : 17 # Number of skeleton joints in the input data
+
+fusion:
+  type: late_probability # Fusion strategy: "early_chn_stack", "early_exp_graph", "middle_shallow", "middle_deep", "late_feature", "late_probability"
+  missing_representation: zero # Missing-action representation: "zero" (zero padding), "pad_mask" (present-only forward + masked mean, late fusion only)
+
+# Data configuration
+attributes              : [p, v, a] # Feature types: [p] (position), [p, v] (position+velocity), [p, v, a] (position+velocity+acceleration)
+fim_item_indices        : [8,9,10,11,12] # FIM item indices: subset of [0,1,2,3,4,5,6,7,8,9,10,11,12] (13 total items)
+combined_action_indices : [0,1,2,3,4,5,6,7,8,9] # Action indices to combine: subset of [0,1,2,3,4,5,6,7,8,9] (10 total actions)
+seeds                   : [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] # Random seeds for cross-validation: list of integers default: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+classes                 : [6,7] # FIM score classes to include: subset of [1,2,3,4,5,6,7] (independence levels)
+data_list_path          : "" # Path to data list CSV file: e.g., "data/DataLists/AllExists_01020304050607080910.csv"
+device                  : cuda:1 # Compute device: "cpu", "cuda:0" etc.
+seed_fix_mode           : change # Seed fixing strategy: "split", "model", "change" (change affects both)
+output_weights          : true # Save model weights: true/false
+
+preprocess:
+  use_data_transform  : false # Apply data augmentation: true/false
+  norm_centering_mode : First # Normalization mode: "None", "Each" (per frame), "First" (relative to first frame)
+  norm_center_point   : SpineMid # Center point for normalization: joint name (e.g., "SpineMid", "SpineShoulder")
+  use_moving_frame    : true # Use moving average for smoothing: true/false
+  frame_length        : 150 # Target sequence length: positive integer (frames)
+  is_fill_short       : true # Pad short sequences: true/false
+  is_fill_actionless  : true # Fill missing actions with zeros: true/false
+  complement_actionless: false # Use corresponding seated action for missing standing action: true/false
+  # Note: complement_actionless is ignored when is_fill_actionless is false
+
+# Training configuration
+trainings:
+  epoch         : 100 # Number of training epochs: positive integer (typically 50-200)
+  optimizer     : Adam # Optimizer type: "Adam", "AdamW", "SGD", "RMSprop"
+  lr            : 0.01 # Initial learning rate: 0.001-0.1 (typically 0.001-0.01)
+  momentum      : 0.9 # SGD momentum: 0.0-0.99 (only for SGD)
+  weight_decay  : 0.0001 # L2 regularization strength: 0.0-0.01 (typically 1e-5 to 1e-3)
+  scheduler     : OneCycleLR # Learning rate scheduler: "OneCycleLR", "ReduceLROnPlateau", "MultiStepLR", "StepLR"
+  one_cycle_lr:
+    pct_start: 0.3 # Percentage of cycle for learning rate increase: 0.1-0.5
+  reduce_lr_on_plateau:
+    factor: 0.5 # Learning rate reduction factor: 0.1-0.5
+    mode: min # Monitoring mode: "min" (for loss), "max" (for accuracy)
+    patience: 10 # Epochs to wait before reducing LR: 5-20
+  multi_step_lr:
+    gamma: 0.1 # Learning rate decay factor: 0.1-0.5
+    milestones: [15, 35] # Epochs at which to decay LR: list of epoch numbers
+
+  # General training parameters
+  batch_size                  : 32 # Batch size: 8-128 (depends on GPU memory and model size)
+  modality_dropout_p          : 0.0 # Modality dropout probability: 0.0 disables; randomly drops present actions as pseudo-missing during training only
+  is_weighted_random_sampler  : true # Use weighted sampling for imbalanced data: true/false
+  all_seed_reset              : false # Reset all random seeds each epoch: true/false
+  is_drop_last                : true # Drop last incomplete batch: true/false
+  delete_model_after_training : false # Delete model weights after training: true/false
